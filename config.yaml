@@ -1,0 +1,9 @@
+connect:
+  host: "localhost"
+  port: "6379"
+  database: 0
+  protocol: 3
+  password:
+
+interval: 10s
+limit: 10
