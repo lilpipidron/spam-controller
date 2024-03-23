@@ -21,16 +21,8 @@ func NewClient(opt *redis.Options) (*Client, error) {
 	}
 	return &Client{rClient: rdb}, nil
 }
-func (client *Client) GetAmountMessages1(ctx context.Context, userID uint64) (int, error) {
-	val, err := client.rClient.Get(ctx, strconv.FormatUint(userID, 10)).Time()
-	if err != nil {
-		return -1, err
-	}
-	fmt.Println(val)
-	return 1, nil
-}
 
-func (client *Client) GetAmountMessages(ctx context.Context, userID uint64) (int64, error) {
+func (client *Client) GetAmountMessages(ctx context.Context, userID int64) (int64, error) {
 	key := fmt.Sprintf("messages:%d", userID)
 
 	count, err := client.rClient.LRange(ctx, key, 0, -1).Result()
@@ -41,7 +33,7 @@ func (client *Client) GetAmountMessages(ctx context.Context, userID uint64) (int
 	return int64(len(count)), nil
 }
 
-func (client *Client) AddNewMessage(ctx context.Context, userID uint64, interval time.Duration) error {
+func (client *Client) AddNewMessage(ctx context.Context, userID int64, interval time.Duration) error {
 	err := client.deleteMessages(ctx, userID, interval)
 	if err != nil {
 		return err
@@ -56,7 +48,7 @@ func (client *Client) AddNewMessage(ctx context.Context, userID uint64, interval
 	return nil
 }
 
-func (client *Client) deleteMessages(ctx context.Context, userID uint64, interval time.Duration) error {
+func (client *Client) deleteMessages(ctx context.Context, userID int64, interval time.Duration) error {
 	key := fmt.Sprintf("messages:%d", userID)
 
 	messages, err := client.rClient.LRange(ctx, key, 0, -1).Result()
