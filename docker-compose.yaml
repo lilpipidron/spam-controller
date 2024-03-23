@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  redis:
+    image: redis
+    container_name: redis-flood
+    ports:
+      - "6379:6379"
+    command: [ "redis-server","--databases","1" ]
